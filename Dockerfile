@@ -13,9 +13,10 @@ RUN yum install -y centos-release-scl.noarch && \
     . /opt/rh/rh-python35/enable && \
     pip3 install uwsgi flask && \
     git clone --depth 1 https://github.com/digrouz/mtgapi /opt/mtgapi && \
-    yum history undo last && \
+    yum history -y undo last && \
     yum clean all && \
     rm -rf /tmp/* \
+           /opt/mtgapi/.git* \
            /var/cache/yum/* \
            /var/tmp/*
     
