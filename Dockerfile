@@ -29,7 +29,7 @@ EXPOSE 6666
 ### Running User: not used, managed by docker-entrypoint.sh
 #USER mtgapi
 
-### Start kimchi
+### Start mtgapi
 COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["mtgapi"]
