@@ -77,10 +77,13 @@ ConfigureUser () {
     logger "Created group ${MYUSER}"
   fi
   if ! grep -q "${MYUSER}" /etc/passwd; then
+    if [ -z "${OLDHOME}" ]; then
+      OLDHOME="/home/${MYUSER}"
+    fi
     if [ "${OS}" == "alpine" ]; then
       adduser -S -D -H -s /sbin/nologin -G "${MYUSER}" -h "${OLDHOME}" -u "${MYUID}" "${MYUSER}"
     else
-      /usr/sbin/adduser --system --shell /sbin/nologin --gid "${MYGID}" --home "${OLDHOME}" --uid "${MYUID}" "${MYUSER}"
+      useradd --system --shell /sbin/nologin --gid "${MYGID}" --home "${OLDHOME}" --uid "${MYUID}" "${MYUSER}"
     fi
     logger "Created user ${MYUSER}"
     
