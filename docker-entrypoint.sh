@@ -51,19 +51,19 @@ ConfigureUser () {
   local OLDUID
   if grep -q "${MYUSER}" /etc/passwd; then
     OLDUID=$(id -u "${MYUSER}")
-    OLDGID=$(id -g "${MYUSER}")
     if [ "${DOCKUID}" != "${OLDUID}" ]; then
       OLDHOME=$(grep "$MYUSER" /etc/passwd | awk -F: '{print $6}')
       deluser "${MYUSER}"
       logger "Deleted user ${MYUSER}"
     fi
-    if /bin/grep -q "${MYUSER}" /etc/group; then
-      local OLDGID=$(/usr/bin/id -g "${MYUSER}")
+    if grep -q "${MYUSER}" /etc/group; then    
+      OLDGID=$(id -g "${MYUSER}")
       if [ "${DOCKGID}" != "${OLDGID}" ]; then
-        delgroup "${MYUSER}"
-      else
-        groupdel "${MYUSER}"
-      fi
+        if [ "${OS}" == "alpine" ]; then
+          delgroup "${MYUSER}"
+        else
+          groupdel "${MYUSER}"
+        fi
         logger "Deleted group ${MYUSER}"
       fi
     fi
@@ -71,15 +71,29 @@ ConfigureUser () {
   if ! grep -q "${MYUSER}" /etc/group; then
     if [ "${OS}" == "alpine" ]; then
       addgroup -S -g "${MYGID}" "${MYUSER}"
+    else
+      groupadd -r -g "${MYGID}" "${MYUSER}"
+    fi
+    logger "Created group ${MYUSER}"
   fi
   if ! grep -q "${MYUSER}" /etc/passwd; then
-    adduser -S -D -H -s /sbin/nologin -G "${MYUSER}" -h "${OLDHOME}" -u "${MYUID}" "${MYUSER}"
+    if [ "${OS}" == "alpine" ]; then
+      adduser -S -D -H -s /sbin/nologin -G "${MYUSER}" -h "${OLDHOME}" -u "${MYUID}" "${MYUSER}"
+    else
+      /usr/sbin/adduser --system --shell /sbin/nologin --gid "${MYGID}" --home "${OLDHOME}" --uid "${MYUID}" "${MYUSER}"
+    fi
+    logger "Created user ${MYUSER}"
+    
   fi
   if [ -n "${OLDUID}" ] && [ "${DOCKUID}" != "${OLDUID}" ]; then
+    logger "Fixing permissions for group ${MYUSER}"
     find / -user "${OLDUID}" -exec chown ${MYUSER} {} \;
+    logger "... done!"
   fi
   if [ -n "${OLDGID}" ] && [ "${DOCKGID}" != "${OLDGID}" ]; then
+    logger "Fixing permissions for group ${MYUSER}"
     find / -group "${OLDGID}" -exec chgrp ${MYUSER} {} \;
+    logger "... done!"
   fi
 }
 
