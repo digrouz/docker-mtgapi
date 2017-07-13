@@ -14,6 +14,7 @@ DectectOS(){
     fi
     if grep -q "NAME=\"CentOS Linux\"" /etc/os-release ; then
       OS="centos"
+    fi
   fi
 }
 
