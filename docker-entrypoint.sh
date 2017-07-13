@@ -53,7 +53,11 @@ ConfigureUser () {
     OLDUID=$(id -u "${MYUSER}")
     if [ "${DOCKUID}" != "${OLDUID}" ]; then
       OLDHOME=$(grep "$MYUSER" /etc/passwd | awk -F: '{print $6}')
-      deluser "${MYUSER}"
+      if [ "${OS}" == "alpine" ]; then
+        deluser "${MYUSER}"
+      else
+        userdel "${MYUSER}"
+      fi
       logger "Deleted user ${MYUSER}"
     fi
     if grep -q "${MYUSER}" /etc/group; then    
