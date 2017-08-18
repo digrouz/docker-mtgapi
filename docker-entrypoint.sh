@@ -1,9 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 MYUSER="mtgapi"
 MYGID="10022"
 MYUID="10022"
 OS=""
+MYUPGRADE="1"
 
 DectectOS(){
   if [ -e /etc/alpine-release ]; then
@@ -19,21 +20,26 @@ DectectOS(){
 }
 
 AutoUpgrade(){
-  if [ "${OS}" == "alpine" ]; then
-    apk --no-cache upgrade
-    rm -rf /var/cache/apk/*
-  elif [ "${OS}" == "ubuntu" ]; then
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update
-    apt-get -y --no-install-recommends dist-upgrade
-    apt-get -y autoclean
-    apt-get -y clean
-    apt-get -y autoremove
-    rm -rf /var/lib/apt/lists/*
-  elif [ "${OS}" == "centos" ]; then
-    yum upgrade -y
-    yum clean all
-    rm -rf /var/cache/yum/*
+  if [ -n "${DOCKUPGRADE}" ]; then
+    MYUPGRADE="${DOCKUPGRADE}"
+  fi
+  if [ "${MYUPGRADE}" ]; then
+    if [ "${OS}" == "alpine" ]; then
+      apk --no-cache upgrade
+      rm -rf /var/cache/apk/*
+    elif [ "${OS}" == "ubuntu" ]; then
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update
+      apt-get -y --no-install-recommends dist-upgrade
+      apt-get -y autoclean
+      apt-get -y clean
+      apt-get -y autoremove
+      rm -rf /var/lib/apt/lists/*
+    elif [ "${OS}" == "centos" ]; then
+      yum upgrade -y
+      yum clean all
+      rm -rf /var/cache/yum/*
+    fi
   fi
 }
 
@@ -60,7 +66,7 @@ ConfigureUser () {
       fi
       logger "Deleted user ${MYUSER}"
     fi
-    if grep -q "${MYUSER}" /etc/group; then    
+    if grep -q "${MYUSER}" /etc/group; then
       OLDGID=$(id -g "${MYUSER}")
       if [ "${DOCKGID}" != "${OLDGID}" ]; then
         if [ "${OS}" == "alpine" ]; then
@@ -90,7 +96,7 @@ ConfigureUser () {
       useradd --system --shell /sbin/nologin --gid "${MYGID}" --home "${OLDHOME}" --uid "${MYUID}" "${MYUSER}"
     fi
     logger "Created user ${MYUSER}"
-    
+
   fi
   if [ -n "${OLDUID}" ] && [ "${DOCKUID}" != "${OLDUID}" ]; then
     logger "Fixing permissions for group ${MYUSER}"
