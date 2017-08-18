@@ -109,7 +109,8 @@ AutoUpgrade
 ConfigureUser
 
 if [ "$1" = 'mtgapi' ]; then
+  exec su - mtgapi -s /bin/bash -c ". /opt/rh/rh-python35/enable && cd /opt/mtgapi &&  uwsgi --ini mtgapi.ini"
+else
   exec "$@"
 fi
 
-exec "$@"
