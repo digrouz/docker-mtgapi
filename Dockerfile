@@ -24,7 +24,7 @@ RUN yum install -y centos-release-scl.noarch && \
 #VOLUME []
 
 # Expose ports
-EXPOSE 6666
+EXPOSE 6666 6667
 
 # Running User: not used, managed by docker-entrypoint.sh
 #USER mtgapi
