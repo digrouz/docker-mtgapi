@@ -12,7 +12,8 @@ RUN yum install -y centos-release-scl.noarch && \
     yum install -y wget rh-python35-python-devel gcc git pcre-devel && \
     . /opt/rh/rh-python35/enable && \
     git clone --depth 1 https://github.com/digrouz/mtgapi /opt/mtgapi && \
-    pip3 install -r /opt/mtgapi/requirements.txt && \
+    pip3 install --no-cache-dir --upgrade setuptools pip && \
+    pip3 install --no-cache-dir --upgrade -r /opt/mtgapi/requirements.txt && \
     yum history -y undo last && \
     yum clean all && \
     rm -rf /tmp/* \
