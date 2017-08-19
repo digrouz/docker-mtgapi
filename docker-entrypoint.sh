@@ -114,8 +114,17 @@ DectectOS
 AutoUpgrade
 ConfigureUser
 
-if [ "$1" = 'mtgapi' ]; then
-  exec su - mtgapi -s /bin/bash -c ". /opt/rh/rh-python35/enable && cd /opt/mtgapi &&  uwsgi --ini mtgapi.ini"
+if [ "${1}" == 'mtgapi' ]; then
+  INSTALLDIR=/opt/mtgapi
+  if [ "${OS}" == "centos" ]; then
+    PYTHONENV=". /opt/rh/rh-python35/enable"
+  else
+    PYTHONENV="true"
+  fi 
+  mkdir ${INSTALLDIR}
+  exec su - ${MYUSER} -s /bin/sh -c "${PYTHONENV} && \
+                                     cd ${INSTALLDIR} && \
+                                     uwsgi --ini mtgapi.ini"
 else
   exec "$@"
 fi
