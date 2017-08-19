@@ -124,9 +124,8 @@ if [ "${1}" == 'mtgapi' ]; then
   mkdir ${INSTALLDIR}/data
   chown ${MYUSER}:${MYUSER} ${INSTALLDIR}/data
   chmod 750 ${INSTALLDIR}/data
-  exec su - ${MYUSER} -s /bin/sh -c "${PYTHONENV} && \
-                                     cd ${INSTALLDIR} && \
-                                     uwsgi --ini mtgapi.ini"
+  exec su - ${MYUSER} -s /bin/sh -c "${PYTHONENV} && cd ${INSTALLDIR} && uwsgi --ini mtgapi.ini"
+
 else
   exec "$@"
 fi
