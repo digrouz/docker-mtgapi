@@ -7,7 +7,8 @@ ENV LANG='en_US.UTF-8' \
     TERM='xterm' \
     APPUSER='mtgapi' \
     APPUID='10022' \
-    APPGID='10022' 
+    APPGID='10022' \
+    PY_VERSION='35'
 
 ### Copy config files
 COPY root/ /
@@ -20,13 +21,14 @@ RUN set -x && \
     MYUID="${APPUID}" && \
     MYGID="${APPGID}" && \
     ConfigureUser && \
+    yum-config-manager --add-repo /tmp/custom.repo && \
     yum install -y \
       centos-release-scl.noarch \
     && \
     yum update -y && \
     yum install -y \
       bash \
-      rh-python35-python \
+      rh-python${PY_VERSION}-python \
       pcre \
     && \
     yum install -y \
@@ -36,7 +38,8 @@ RUN set -x && \
       git \
       pcre-devel \
     && \
-    . /opt/rh/rh-python35/enable && \
+    . /opt/rh/rh-python${PY_VERSION}/enable && \
+    ln -s /opt/rh/rh-python${PY_VERSION}/enable /etc/profile.d/docker-python.sh \
     git clone --depth 1 https://github.com/digrouz/mtgapi /opt/mtgapi && \
     pip3 install --no-cache-dir --upgrade \
       setuptools \
