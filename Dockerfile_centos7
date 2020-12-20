@@ -39,7 +39,7 @@ RUN set -x && \
       pcre-devel \
     && \
     . /opt/rh/rh-python${PY_VERSION}/enable && \
-    ln -s /opt/rh/rh-python${PY_VERSION}/enable /etc/profile.d/docker-python.sh \
+    ln -s /opt/rh/rh-python${PY_VERSION}/enable /etc/profile.d/docker-python.sh && \
     git clone --depth 1 https://github.com/digrouz/mtgapi /opt/mtgapi && \
     pip3 install --no-cache-dir --upgrade \
       setuptools \
