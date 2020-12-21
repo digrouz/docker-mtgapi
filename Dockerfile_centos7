@@ -8,7 +8,7 @@ ENV LANG='en_US.UTF-8' \
     APPUSER='mtgapi' \
     APPUID='10022' \
     APPGID='10022' \
-    PY_VERSION='35'
+    PY_VERSION='38'
 
 ### Copy config files
 COPY root/ /
@@ -30,10 +30,12 @@ RUN set -x && \
       bash \
       rh-python${PY_VERSION}-python \
       pcre \
+      su-exec \
     && \
     yum install -y \
       wget \
-      rh-python35-python-devel \
+      rh-python${PY_VERSION}-python-devel \
+      rh-python38-python-pip \
       gcc \
       git \
       pcre-devel \
